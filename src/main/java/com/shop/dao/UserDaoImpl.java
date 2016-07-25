@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * The implementation class for the interface UserDao.
  */
-@Transactional
+
 @Repository
 public class UserDaoImpl implements UserDao {
 
@@ -31,23 +31,27 @@ public class UserDaoImpl implements UserDao {
         this.sessionFactory = sessionFactory;
     }
 
+    @Transactional
     public void addUser(User user) {
         Session session=sessionFactory.openSession();
         session.save(user);
     }
 
+    @Transactional
     public void updateUser(User user) {
         Session session=sessionFactory.getCurrentSession();
         session.update(user);
     }
 
+    @Transactional
     public void deleteUser(User user) {
-        Session session=sessionFactory.getCurrentSession();
+        Session session=sessionFactory.openSession();
         session.delete(user);
     }
 
+    @Transactional
     public User findUser(int userId) {
-        Session session=sessionFactory.getCurrentSession();
+        Session session=sessionFactory.openSession();
         Criteria criteria = session.createCriteria(User.class);
         criteria.add(Restrictions.eq(USER_ID, userId));
         List result = criteria.list();
@@ -58,10 +62,11 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
+    @Transactional
     public User searchUserByMail(String emailId)
     {
         try {
-            Session session = sessionFactory.getCurrentSession();
+            Session session = sessionFactory.openSession();
             Criteria criteria = session.createCriteria(User.class);
             criteria.add(Restrictions.eq(EMAIL_ID, emailId));
             criteria.setMaxResults(1);
@@ -77,6 +82,7 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
+    @Transactional
     public User findUser(String username,String password)
     {
         try {
@@ -97,6 +103,7 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
+    @Transactional
     public User findUser(String username)
     {
         Session session = null;
@@ -118,6 +125,7 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
+    @Transactional
     public List<User> listAllUsers()
     {
         Session session=sessionFactory.getCurrentSession();
@@ -126,15 +134,17 @@ public class UserDaoImpl implements UserDao {
         return userList;
     }
 
+    @Transactional
     public List<Object> getAllUsers()
     {
         Session session=sessionFactory.getCurrentSession();
-        Query query=session.createQuery("select u.userId, u.name, u.emailId, u.organizationId, u.roleId " +
+        Query query=session.createQuery("select u.userId, u.name, u.emailId, u.roleId " +
                 "from com.shop.models.User u");
         List<Object> userList =query.list();
         return userList;
     }
 
+    @Transactional
     public User findOtherUsers(int roleId,int userId)
     {
         Session session=sessionFactory.getCurrentSession();

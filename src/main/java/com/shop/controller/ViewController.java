@@ -59,6 +59,12 @@ public class ViewController {
         return ViewConstants.USER_REGISTRATION;
     }
 
+    @RequestMapping(value = "/user/profile-page")
+    public String profilePage()
+    {
+        return ViewConstants.USER_PROFILE;
+    }
+
     @RequestMapping(value = "/login-page")
     public String loginPage()
     {

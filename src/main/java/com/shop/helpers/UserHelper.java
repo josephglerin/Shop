@@ -128,9 +128,6 @@ public class UserHelper {
     public ModelMap updateUser(User user)
     {
         ModelMap modelMap=new ModelMap();
-        boolean notSuperUser = checkSuperUser(user,"update");
-        if (notSuperUser)
-        {
         try {
             //checking emailid
             User user1 = userService.searchUserByMail(user.getEmailId());
@@ -144,22 +141,7 @@ public class UserHelper {
                     modelMap.addAttribute(MESSAGE, RESPONSE_MESSAGE);
                     return modelMap;
                 }
-                else
-                {
-                    if(user.getPassword() == null)
-                    {
-                        user.setPassword(user1.getPassword());
-                    }
-                }
             }
-            else{
-                if(user.getPassword() == null)
-                {
-                    user1=userService.findUser(user.getUserId());
-                    user.setPassword(user1.getPassword());
-                }
-            }
-
             userService.updateUser(user);
             modelMap.addAttribute(STATUS, SUCCESS);
             modelMap.addAttribute(user);
@@ -168,19 +150,11 @@ public class UserHelper {
         catch (DataIntegrityViolationException e)
         {
             modelMap.addAttribute(STATUS, FAILURE);
-            RESPONSE_MESSAGE = "User information update failed";
+            RESPONSE_MESSAGE = "User profile updation failed";
             modelMap.addAttribute(MESSAGE,RESPONSE_MESSAGE);
             loger.error(e.getMessage());
             loger.error(RESPONSE_MESSAGE);
         }
-    }
-    else{
-        modelMap.addAttribute(STATUS, FAILURE);
-        modelMap.addAttribute(user);
-        RESPONSE_MESSAGE = "Updation failed. Cannot change super admin role";
-        modelMap.addAttribute(MESSAGE, RESPONSE_MESSAGE);
-        loger.info(RESPONSE_MESSAGE);
-    }
         return modelMap;
     }
 

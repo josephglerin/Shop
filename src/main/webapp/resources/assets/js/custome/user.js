@@ -10,24 +10,40 @@ $(document).ready(function(){
         userRegistration();
     });
 
+    $("#profile-edit-btn").click(function(e){
+        e.preventDefault();
+        $("#profile-view").hide();
+        $("#profile-edit").show();
+    });
+
+    $("#profile-edit-form").submit(function(e){
+        e.preventDefault();
+        updateUserProfile();
+    });
+
+
+
+
+
+
+
+    var path = window.location.pathname;
+    if(path === "/user/profile-page"){
+        $("#profile-edit").hide();
+        var userid = $.cookie("userid");
+        $.when(getUserProfile(userid)).done(function(response){
+            if(response.status === "success"){
+                renderProfileInfo(response.user);
+            }
+        });
+    }
+
+
 });
 
 
 
-
-
-function serachUser(userList,strSearch){
-    tmpuserList = []
-    for(var index = 0; index < userList.length; index++) {
-        var regSearch = new RegExp(strSearch,"gi");
-        if (userList[index].emailId.search(regSearch)!= -1) {
-            tmpuserList.push(userList[index]);
-        }
-    }
-
-    return tmpuserList;
-}
-
+//User registration API call
 function userRegistration() {
     var user = {
         "name": $("#name").val(),
@@ -56,32 +72,62 @@ function userRegistration() {
             console.log("error")
         }
     });
-
-
 }
 
 
-//function getAllUsers() {
-//    var GetURL = KbygUser.listUrlAPI;
-//    $.ajax({type: 'GET',
-//        url: GetURL,
-//        contentType: 'application/json',
-//        Accept: 'application/json'
-//    }).done(function(data) {
-//        if(data.status == "success"){
-//            // render user list
-//            alert("success");
-//            usersData = data.userList;
-//            renderUserList(usersData);
-//        }else{
-//            alert("failure");
-//            //show message
-//            showMessage("User List failed","error","");
-//
-//        }
-//    });
-//
-//}
+//updating user profile API
+function updateUserProfile() {
+    var user = {
+        "name": $("#name-edit").val(),
+        "emailId":$("#email-edit").val(),
+        "phoneNo": $("#phone-edit").val(),
+         "userId" : $.cookie("userid")
+    }
+    console.log("user = "+JSON.stringify(user));
+
+    $.ajax({
+        type: 'POST',
+        url: '/user/profile',
+        contentType: 'application/json',
+        Accept: 'application/json',
+        async: false,
+        data: JSON.stringify(user),
+        success: function(data){
+            if(data.status == "success"){
+                console.log("Success");
+                $("#profile-view").show();
+                $("#profile-edit").hide();
+            }
+
+        },
+        error: function(data) {
+            console.log(JSON.stringify(data));
+            console.log("error")
+        }
+    });
+}
+
+//fetching user profiles api
+function getUserProfile(userid) {
+    var GetURL = "/user/profile?userid="+userid
+    return  $.ajax({type: 'GET',
+        url: GetURL,
+        contentType: 'application/json',
+        Accept: 'application/json'
+    }).done(function(data) {
+
+    });
+}
+
+//rendering user profile details
+function renderProfileInfo(user){
+    $("#name").text(user.name);
+    $("#email").text(user.emailId);
+    $("#phone").text(user.phoneNo);
+    $("#name-edit").val(user.name);
+    $("#email-edit").val(user.emailId);
+    $("#phone-edit").val(user.phoneNo);
+}
 
 
 //function showMessage(message,type,redirect) {

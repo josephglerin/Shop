@@ -89,21 +89,6 @@ public class UserController {
 	}
 
 
-    /**
-     * Add new user.
-     * The request and response is in JSON format.
-     *
-     * @param user the User class object
-     * @return the ModelMap object.
-     */
-	@RequestMapping(value = {"/add-user"},method = RequestMethod.PUT,produces = JSON_FORMAT,consumes = JSON_FORMAT)
-	public ModelMap addUser(@RequestBody User user)
-	{
-		loger.info("Reuest for new user registration");
-		loger.info(INPUT+ gson.toJson(user));
-        ModelMap modelMap=userHelper.newUserRegistration(user);
-		return modelMap;
-	}
 
     /**
      * Gets users list.
@@ -130,7 +115,7 @@ public class UserController {
      * @param user the User class object
      * @return theModelMap object.
      */
-	@RequestMapping(value = {"/update-user"},method = RequestMethod.POST,produces = JSON_FORMAT,consumes = JSON_FORMAT)
+	@RequestMapping(value = {"/profile"},method = RequestMethod.POST,produces = JSON_FORMAT,consumes = JSON_FORMAT)
 	public ModelMap updateUser(@RequestBody User user)
 	{
         loger.info("Reuest for updating a user detail");
@@ -146,8 +131,8 @@ public class UserController {
      * @param userId the user id
      * @return the ModelMap object.
      */
-	@RequestMapping(value = {"/get-user-info"},method = RequestMethod.GET,produces = JSON_FORMAT)
-	public ModelMap getUser(@RequestParam(value = USER_ID)int userId)
+	@RequestMapping(value = {"/profile"},method = RequestMethod.GET,produces = JSON_FORMAT)
+	public ModelMap getUser(@CookieValue(value = "userid",required = false,defaultValue = "0") Integer userId)
 	{
 		ModelMap modelMap=new ModelMap();
 		loger.info("Reuest for fetching a user");

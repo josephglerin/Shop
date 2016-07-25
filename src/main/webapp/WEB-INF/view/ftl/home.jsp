@@ -10,7 +10,7 @@
 Welcome user
 
 <ul>
-    <li><a href="/user/profile">View Profile</a></li>
+    <li><a href="/user/profile-page">View Profile</a></li>
     <li><a href="/user/products">Your Products</a></li>
     <li><a href="/product/registration">New Product Registration</a></li>
     <li><a href="/products/list">All Products</a></li>
