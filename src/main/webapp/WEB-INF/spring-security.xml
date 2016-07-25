@@ -1,0 +1,96 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+    <!--<context:component-scan base-package="com.shop"></context:component-scan>-->
+    <!--<context:property-placeholder location="classpath:database.properties, classpath:hibernate.properties" ></context:property-placeholder>-->
+
+    <http auto-config="true">
+        <headers>
+            <hsts/>
+            <cache-control/>
+        </headers>
+        <intercept-url pattern="/admin**" access="ROLE_ADMIN" />
+        <intercept-url pattern="/home**" access="ROLE_USER" />
+        <intercept-url pattern="/home/" access="ROLE_USER" />
+        <intercept-url pattern="/admin/" access="ROLE_ADMIN,ROLE_SUPER_ADMIN" />
+        <intercept-url pattern="/admin/users" access="ROLE_SUPER_ADMIN" />
+        <intercept-url pattern="/admin/organizations" access="ROLE_SUPER_ADMIN" />
+        <form-login
+                login-page="/login"
+                authentication-success-handler-ref="customSuccessHandler"
+                authentication-failure-url="/login?error"
+                username-parameter="email"
+                password-parameter="password"
+                />
+
+        <access-denied-handler error-page="/403"/>
+        <logout delete-cookies="JSESSIONID" invalidate-session="true" logout-url="/logout" />
+
+
+    </http>
+
+    <authentication-manager>
+        <authentication-provider user-service-ref="UserDetailsService" >
+        </authentication-provider>
+    </authentication-manager>
+
+
+    <beans:bean id="customSuccessHandler" class="com.shop.config.CustomSuccessHandler">
+        <beans:property name="userService" ref="userService"/>
+    </beans:bean>
+
+    <beans:bean id="UserDetailsService" class="com.shop.services.ShopUserDetailsService">
+        <beans:property name="userDao" ref="userDao"/>
+
+    </beans:bean>
+
+
+    <beans:bean id="userService" class="com.shop.services.UserServiceImpl">
+        <beans:property name="userDao" ref="userDao"/>
+    </beans:bean>
+
+    <beans:bean id="userDao" class="com.shop.dao.UserDaoImpl">
+        <beans:property name="sessionFactory" ref="sessionFactory"/>
+    </beans:bean>
+
+    <beans:bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <beans:property name="dataSource" ref="dataSource"/>
+        <beans:property name="hibernateProperties">
+            <beans:props>
+                <beans:prop key="hibernate.dialect" >org.hibernate.dialect.MySQLDialect</beans:prop>
+                <beans:prop key="hibernate.show_sql">true</beans:prop>
+                <beans:prop key="hibernate.format_sql">true</beans:prop>
+                <!--${hibernate.dialec}-->
+                <!--${hibernate.show_sql}-->
+                <!--${hibernate.format_sql}-->
+            </beans:props>
+
+        </beans:property>
+        <beans:property name="packagesToScan" value="com.shop.models"/>
+    </beans:bean>
+
+
+
+    <beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--<beans:property name="driverClassName" value="${jdbc.driverClassName}"/>-->
+        <!--<beans:property name="url" value="${jdbc.url}"/>-->
+        <!--<beans:property name="username" value="${jdbc.username}"/>-->
+        <!--<beans:property name="password" value="${jdbc.password}" />-->
+        <beans:property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <beans:property name="url" value="jdbc:mysql://localhost:3306/shop"/>
+        <beans:property name="username" value="root"/>
+        <beans:property name="password" value="root" />
+    </beans:bean>
+
+    <beans:bean id="hibernateTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <beans:property name="sessionFactory" ref="sessionFactory"/>
+    </beans:bean>
+
+
+</beans:beans>

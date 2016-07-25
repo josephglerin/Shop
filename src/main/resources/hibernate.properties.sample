@@ -1,0 +1,9 @@
+#hibernate properties
+
+hibernate.dialect = org.hibernate.dialect.OracleDialect
+hibernate.show_sql = true
+hibernate.format_sql = true
+
+#kbyg
+# kbyg local    = tomcat : jdbc/kbygDS-local   &  weblogic : kbygDS-local
+# kbyg remote   = tomcat : jdbc/kbygDS         &  weblogic : kbygDS
